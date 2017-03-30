@@ -3,33 +3,7 @@ use std::cmp::Ordering;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::rc::Rc;
-use std::time::{Duration, Instant};
-
-/// Trait representing an object tracking the flow of time
-pub trait Clock
-    : Eq + Ord + Clone + fmt::Debug + Add<Duration, Output = Self> + Sub<Duration, Output = Self> + Sub<Self, Output=Duration>
-    {
-/// Returns an instance representing the current moment in time
-    fn now() -> Self;
-/// Returns the duration between `self` and `earlier`
-    fn duration_since(&self, earlier: &Self) -> Duration;
-/// Returns the amount of time elapsed since creation of `self`
-    fn elapsed(&self) -> Duration;
-}
-
-impl Clock for Instant {
-    fn now() -> Self {
-        Self::now()
-    }
-
-    fn duration_since(&self, earlier: &Self) -> Duration {
-        self.duration_since(*earlier)
-    }
-
-    fn elapsed(&self) -> Duration {
-        self.elapsed()
-    }
-}
+use std::time::Duration;
 
 /// Struct representing a fake instant
 #[derive(Clone)]
@@ -68,10 +42,8 @@ impl FakeClock {
     pub fn time_mut(&self) -> RefMut<u64> {
         self.time.borrow_mut()
     }
-}
 
-impl Clock for FakeClock {
-    fn now() -> Self {
+    pub fn now() -> Self {
         let rc_time = Self::rc_time();
         let time = *rc_time.borrow();
         FakeClock {
@@ -80,11 +52,11 @@ impl Clock for FakeClock {
         }
     }
 
-    fn duration_since(&self, earlier: &Self) -> Duration {
+    pub fn duration_since(&self, earlier: &Self) -> Duration {
         Duration::from_millis(self.time_created - earlier.time_created)
     }
 
-    fn elapsed(&self) -> Duration {
+    pub fn elapsed(&self) -> Duration {
         Duration::from_millis(self.time() - self.time_created)
     }
 }
