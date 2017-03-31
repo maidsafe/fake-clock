@@ -40,7 +40,7 @@ script:
       (
         set -x;
         cargo clippy &&
-        cargo clippy --profile=test &&
+        cargo clippy --profile=test
       );
     fi
 before_cache:
