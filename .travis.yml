@@ -32,8 +32,6 @@ script:
       (
         set -x;
         cargo fmt -- --write-mode=diff &&
-        cargo rustc --verbose -- --test -Zno-trans &&
-        cargo rustc --verbose -- -Zno-trans &&
         cargo test --release --verbose &&
         cargo test --verbose
       );
