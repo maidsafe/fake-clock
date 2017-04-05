@@ -11,7 +11,7 @@
 
 ## Overview
 
-Rust crate for a fake clock
+This crate supplies a `FakeClock` struct, which mimics the interface of `std::time::Instant` and enables full control over the flow of time as perceived by the code during testing.
 
 ## License
 
