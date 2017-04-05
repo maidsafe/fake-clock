@@ -7,6 +7,6 @@ license = "GPL-3.0"
 name = "fake_clock"
 readme = "README.md"
 repository = "https://github.com/maidsafe/fake_clock"
-version = "0.0.1"
+version = "0.1.0"
 
 [dependencies]
