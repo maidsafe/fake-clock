@@ -1,63 +1,66 @@
-use std::cell::{RefCell, RefMut};
+// Copyright 2017 MaidSafe.net limited.
+//
+// This SAFE Network Software is licensed to you under (1) the MaidSafe.net Commercial License,
+// version 1.0 or later, or (2) The General Public License (GPL), version 3, depending on which
+// licence you accepted on initial access to the Software (the "Licences").
+//
+// By contributing code to the SAFE Network Software, or to this project generally, you agree to be
+// bound by the terms of the MaidSafe Contributor Agreement.  This, along with the Licenses can be
+// found in the root directory of this project at LICENSE, COPYING and CONTRIBUTOR.
+//
+// Unless required by applicable law or agreed to in writing, the SAFE Network Software distributed
+// under the GPL Licence is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.
+//
+// Please review the Licences for the specific language governing permissions and limitations
+// relating to use of the SAFE Network Software.
+
+use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::fmt;
 use std::ops::{Add, Sub};
-use std::rc::Rc;
 use std::time::Duration;
 
 /// Struct representing a fake instant
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct FakeClock {
-    time: Rc<RefCell<u64>>,
     time_created: u64,
 }
 
-impl FakeClock {
-    /// Returns `Rc<RefCell<u64>>` representing the thread-local fake time
-    pub fn rc_time() -> Rc<RefCell<u64>> {
-        thread_local!{
-            static LOCAL_TIME: Rc<RefCell<u64>> = Rc::new(RefCell::new(0));
-        }
-        LOCAL_TIME.with(|t| t.clone())
-    }
+thread_local!{
+    static LOCAL_TIME: RefCell<u64> = RefCell::new(0);
+}
 
+impl FakeClock {
     /// Sets the thread-local fake time to the given value
     pub fn set_time(time: u64) {
-        let rc_time = Self::rc_time();
-        *rc_time.borrow_mut() = time;
+        LOCAL_TIME.with(|t| { *t.borrow_mut() = time; });
     }
 
     /// Advances the thread-local fake time by the given amount of milliseconds
     pub fn advance_time(millis: u64) {
-        let rc_time = Self::rc_time();
-        *rc_time.borrow_mut() += millis;
+        LOCAL_TIME.with(|t| { *t.borrow_mut() += millis; });
     }
 
     /// Returns the current thread-local fake time
-    pub fn time(&self) -> u64 {
-        *self.time.borrow()
+    pub fn time() -> u64 {
+        LOCAL_TIME.with(|t| *t.borrow())
     }
 
-    /// Returns a mutable reference to the thread-local fake time
-    pub fn time_mut(&self) -> RefMut<u64> {
-        self.time.borrow_mut()
-    }
-
+    /// Returns a `FakeClock` instance representing the current instant.
     pub fn now() -> Self {
-        let rc_time = Self::rc_time();
-        let time = *rc_time.borrow();
-        FakeClock {
-            time: rc_time,
-            time_created: time,
-        }
+        let time = Self::time();
+        FakeClock { time_created: time }
     }
 
+    /// Returns the duration that passed between `self` and `earlier`.
     pub fn duration_since(&self, earlier: &Self) -> Duration {
         Duration::from_millis(self.time_created - earlier.time_created)
     }
 
+    /// Returns how much fake time has elapsed since the creation of `self`.
     pub fn elapsed(&self) -> Duration {
-        Duration::from_millis(self.time() - self.time_created)
+        Duration::from_millis(Self::time() - self.time_created)
     }
 }
 
