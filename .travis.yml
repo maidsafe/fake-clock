@@ -34,7 +34,8 @@ script:
         cargo fmt -- --write-mode=diff &&
         cargo rustc --verbose -- --test -Zno-trans &&
         cargo rustc --verbose -- -Zno-trans &&
-        env RUSTFLAGS="-C opt-level=2 -C codegen-units=8" cargo test --release --verbose
+        cargo test --release --verbose &&
+        cargo test --verbose
       );
     elif [ "${TRAVIS_OS_NAME}" = linux ]; then
       (
