@@ -109,9 +109,11 @@ impl Ord for FakeClock {
 
 impl fmt::Debug for FakeClock {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter,
-               "FakeClock {{ time_created: {} }}",
-               self.time_created)
+        write!(
+            formatter,
+            "FakeClock {{ time_created: {} }}",
+            self.time_created
+        )
     }
 }
 
