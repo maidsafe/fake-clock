@@ -36,8 +36,9 @@
         unused_comparisons, unused_features, unused_parens, while_true)]
 #![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results)]
-#![allow(box_pointers, fat_ptr_transmutes, missing_copy_implementations,
-missing_debug_implementations, variant_size_differences)]
+#![allow(box_pointers, missing_copy_implementations, missing_debug_implementations,
+         variant_size_differences)]
+
 use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::fmt;
@@ -120,7 +121,7 @@ impl fmt::Debug for FakeClock {
 impl Add<Duration> for FakeClock {
     type Output = FakeClock;
     fn add(mut self, other: Duration) -> FakeClock {
-        self.time_created += other.as_secs() * 1000 + other.subsec_nanos() as u64 / 1000000;
+        self.time_created += other.as_secs() * 1000 + u64::from(other.subsec_nanos()) / 1_000_000;
         self
     }
 }
@@ -128,7 +129,7 @@ impl Add<Duration> for FakeClock {
 impl Sub<Duration> for FakeClock {
     type Output = FakeClock;
     fn sub(mut self, other: Duration) -> FakeClock {
-        self.time_created -= other.as_secs() * 1000 + other.subsec_nanos() as u64 / 1000000;
+        self.time_created -= other.as_secs() * 1000 + u64::from(other.subsec_nanos()) / 1_000_000;
         self
     }
 }
