@@ -106,12 +106,12 @@ impl FakeClock {
     }
 
     /// Returns the duration that passed between `self` and `earlier`.
-    pub fn duration_since(&self, earlier: &Self) -> Duration {
+    pub fn duration_since(self, earlier: Self) -> Duration {
         Duration::from_millis(self.time_created - earlier.time_created)
     }
 
     /// Returns how much fake time has elapsed since the creation of `self`.
-    pub fn elapsed(&self) -> Duration {
+    pub fn elapsed(self) -> Duration {
         Duration::from_millis(Self::time() - self.time_created)
     }
 }
