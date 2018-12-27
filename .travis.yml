@@ -2,14 +2,12 @@ env:
   global:
     - RUST_BACKTRACE=1
     - PATH=$PATH:$HOME/.cargo/bin
-    - RUST_STABLE=1.28.0
-    - RUST_NIGHTLY=nightly-2018-07-07
 os:
   - linux
   - osx
 language: rust
 rust:
-  - 1.31.1
+  - stable
 sudo: false
 branches:
   only:
