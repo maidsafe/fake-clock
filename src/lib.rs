@@ -64,6 +64,7 @@ use std::cell::Cell;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::time::Duration;
+use std::convert::TryInto;
 
 /// Struct representing a fake instant
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -110,6 +111,24 @@ impl FakeClock {
     pub fn elapsed(self) -> Duration {
         Duration::from_millis(Self::time() - self.time_created)
     }
+
+    /// Returns `Some(t)` where `t` is the time `self + duration` if `t` can be
+    /// represented as `FakeClock`, `None` otherwise.
+    pub fn checked_add(&self, duration: Duration) -> Option<FakeClock> {
+        duration.as_millis()
+            .checked_add(self.time_created as u128)
+            .and_then(|time| time.try_into().ok())
+            .map(|time| FakeClock { time_created: time })
+    }
+
+    /// Returns `Some(t)` where `t` is the time `self - duration` if `t` can be
+    /// represented as `FakeClock`, `None` otherwise.
+    pub fn checked_sub(&self, duration: Duration) -> Option<FakeClock> {
+        duration.as_millis()
+            .try_into().ok()
+            .and_then(|dur| self.time_created.checked_sub(dur))
+            .map(|time| FakeClock { time_created: time })
+    }
 }
 
 impl fmt::Debug for FakeClock {
@@ -125,7 +144,7 @@ impl fmt::Debug for FakeClock {
 impl Add<Duration> for FakeClock {
     type Output = FakeClock;
     fn add(mut self, other: Duration) -> FakeClock {
-        self.time_created += other.as_secs() * 1000 + u64::from(other.subsec_nanos()) / 1_000_000;
+        self.time_created += other.as_millis() as u64;
         self
     }
 }
@@ -133,7 +152,7 @@ impl Add<Duration> for FakeClock {
 impl Sub<Duration> for FakeClock {
     type Output = FakeClock;
     fn sub(mut self, other: Duration) -> FakeClock {
-        self.time_created -= other.as_secs() * 1000 + u64::from(other.subsec_nanos()) / 1_000_000;
+        self.time_created -= other.as_millis() as u64;
         self
     }
 }
