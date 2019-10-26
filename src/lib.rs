@@ -109,6 +109,18 @@ impl FakeClock {
         Duration::from_millis(self.time_created - earlier.time_created)
     }
 
+    /// Returns the amount of fake time elapsed from another `FakeClock` to
+    /// this one, or `None` if that `FakeClock` is earlier than this one.
+    pub fn checked_duration_since(&self, earlier: FakeClock) -> Option<Duration> {
+        self.time_created.checked_sub(earlier.time_created).map(Duration::from_millis)
+    }
+
+    /// Returns the amount of fake time elapsed from another `FakeClock` to
+    /// this one, or zero duration if that `FakeClock` is earlier than this one.
+    pub fn saturating_duration_since(&self, earlier: FakeClock) -> Duration {
+        self.checked_duration_since(earlier).unwrap_or(Duration::new(0, 0))
+    }
+
     /// Returns how much fake time has elapsed since the creation of `self`.
     pub fn elapsed(self) -> Duration {
         Duration::from_millis(Self::time() - self.time_created)
