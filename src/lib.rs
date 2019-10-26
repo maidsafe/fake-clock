@@ -185,3 +185,50 @@ impl Sub<FakeClock> for FakeClock {
         Duration::from_millis(self.time_created - other.time_created)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_checked_add_some() {
+        FakeClock::set_time(0);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+        FakeClock::set_time(std::u64::MAX);
+
+        assert_eq!(Some(FakeClock::now()), inst.checked_add(dur));
+    }
+
+    #[test]
+    fn test_checked_add_none() {
+        FakeClock::set_time(1);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+
+        assert_eq!(None, inst.checked_add(dur));
+    }
+
+    #[test]
+    fn test_checked_sub_some() {
+        FakeClock::set_time(std::u64::MAX);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+        FakeClock::set_time(0);
+
+        assert_eq!(Some(FakeClock::now()), inst.checked_sub(dur));
+    }
+
+    #[test]
+    fn test_checked_sub_none() {
+        FakeClock::set_time(std::u64::MAX - 1);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+
+        assert_eq!(None, inst.checked_sub(dur));
+    }
+}
