@@ -243,4 +243,46 @@ mod tests {
 
         assert_eq!(None, inst.checked_sub(dur));
     }
+
+    #[test]
+    fn checked_duration_since_some() {
+        FakeClock::set_time(0);
+        let inst0 = FakeClock::now();
+        FakeClock::set_time(std::u64::MAX);
+        let inst_max = FakeClock::now();
+
+        assert_eq!(Some(Duration::from_millis(std::u64::MAX)),
+            inst_max.checked_duration_since(inst0));
+    }
+
+    #[test]
+    fn checked_duration_since_none() {
+        FakeClock::set_time(1);
+        let inst1 = FakeClock::now();
+        FakeClock::set_time(0);
+        let inst0 = FakeClock::now();
+
+        assert_eq!(None, inst0.checked_duration_since(inst1));
+    }
+
+    #[test]
+    fn saturating_duration_since_nonzero() {
+        FakeClock::set_time(0);
+        let inst0 = FakeClock::now();
+        FakeClock::set_time(std::u64::MAX);
+        let inst_max = FakeClock::now();
+
+        assert_eq!(Duration::from_millis(std::u64::MAX),
+            inst_max.saturating_duration_since(inst0));
+    }
+
+    #[test]
+    fn saturating_duration_since_zero() {
+        FakeClock::set_time(1);
+        let inst1 = FakeClock::now();
+        FakeClock::set_time(0);
+        let inst0 = FakeClock::now();
+
+        assert_eq!(Duration::new(0, 0), inst0.saturating_duration_since(inst1));
+    }
 }
