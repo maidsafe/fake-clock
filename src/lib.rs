@@ -60,7 +60,7 @@
     variant_size_differences
 )]
 
-use std::cell::RefCell;
+use std::cell::Cell;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::time::Duration;
@@ -72,27 +72,27 @@ pub struct FakeClock {
 }
 
 thread_local! {
-    static LOCAL_TIME: RefCell<u64> = RefCell::new(0);
+    static LOCAL_TIME: Cell<u64> = Cell::new(0);
 }
 
 impl FakeClock {
     /// Sets the thread-local fake time to the given value
     pub fn set_time(time: u64) {
         LOCAL_TIME.with(|t| {
-            *t.borrow_mut() = time;
+            t.set(time);
         });
     }
 
     /// Advances the thread-local fake time by the given amount of milliseconds
     pub fn advance_time(millis: u64) {
         LOCAL_TIME.with(|t| {
-            *t.borrow_mut() += millis;
+            t.set(t.get() + millis);
         });
     }
 
     /// Returns the current thread-local fake time
     pub fn time() -> u64 {
-        LOCAL_TIME.with(|t| *t.borrow())
+        LOCAL_TIME.with(|t| t.get())
     }
 
     /// Returns a `FakeClock` instance representing the current instant.
