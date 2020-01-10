@@ -68,7 +68,7 @@ use std::ops::{Add, Sub};
 use std::time::Duration;
 
 /// Struct representing a fake instant
-#[derive(Clone, Copy)]
+#[derive(Copy, Clone, Hash)]
 pub struct FakeClock {
     time_created: u64,
 }
