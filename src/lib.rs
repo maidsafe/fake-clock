@@ -66,9 +66,10 @@ use std::cmp::Ordering;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::time::Duration;
+use std::hash::{Hash, Hasher};
 
 /// Struct representing a fake instant
-#[derive(Copy, Clone, Hash)]
+#[derive(Clone, Copy)]
 pub struct FakeClock {
     time_created: u64,
 }
@@ -117,6 +118,12 @@ impl FakeClock {
 impl PartialEq for FakeClock {
     fn eq(&self, other: &FakeClock) -> bool {
         self.time_created == other.time_created
+    }
+}
+
+impl Hash for FakeClock {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.time_created.hash(state);
     }
 }
 
