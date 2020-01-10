@@ -64,9 +64,9 @@
 use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::fmt;
+use std::hash::{Hash, Hasher};
 use std::ops::{Add, Sub};
 use std::time::Duration;
-use std::hash::{Hash, Hasher};
 
 /// Struct representing a fake instant
 #[derive(Clone, Copy)]
