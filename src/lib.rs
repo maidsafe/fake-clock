@@ -62,14 +62,12 @@
 )]
 
 use std::cell::RefCell;
-use std::cmp::Ordering;
 use std::fmt;
-use std::hash::{Hash, Hasher};
 use std::ops::{Add, Sub};
 use std::time::Duration;
 
 /// Struct representing a fake instant
-#[derive(Clone, Copy)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct FakeClock {
     time_created: u64,
 }
@@ -112,32 +110,6 @@ impl FakeClock {
     /// Returns how much fake time has elapsed since the creation of `self`.
     pub fn elapsed(self) -> Duration {
         Duration::from_millis(Self::time() - self.time_created)
-    }
-}
-
-impl PartialEq for FakeClock {
-    fn eq(&self, other: &FakeClock) -> bool {
-        self.time_created == other.time_created
-    }
-}
-
-impl Hash for FakeClock {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.time_created.hash(state);
-    }
-}
-
-impl Eq for FakeClock {}
-
-impl PartialOrd for FakeClock {
-    fn partial_cmp(&self, other: &FakeClock) -> Option<Ordering> {
-        self.time_created.partial_cmp(&other.time_created)
-    }
-}
-
-impl Ord for FakeClock {
-    fn cmp(&self, other: &FakeClock) -> Ordering {
-        self.time_created.cmp(&other.time_created)
     }
 }
 
