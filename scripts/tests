@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -x -e
+
+cargo test "$@" --release --verbose
+cargo test "$@" --verbose
