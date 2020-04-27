@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -x -e
+
+cargo clippy "$@" --all-targets
+cargo clippy "$@" --all-targets --profile=test
