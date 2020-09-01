@@ -7,7 +7,7 @@
 // specific language governing permissions and limitations relating to use of the SAFE Network
 // Software.
 
-//! # fake_clock
+//! # sn_fake_clock
 //!
 //! A crate providing a virtual clock mimicking `std::time::Instant`'s interface, enabling full
 //! control over the flow of time during testing.
