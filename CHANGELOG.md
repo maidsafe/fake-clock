@@ -1,4 +1,13 @@
-# Fake Clock - Change Log
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### 0.4.1 (2020-09-17)
+
+
+### Bug Fixes
+
+* **ci:** fix clippy errors and warnings ([baf97ab](https://github.com/maidsafe/sn_fake_clock/commit/baf97ab609530e5324f9f62f90f1e86987b73d23))
 
 ## [0.4.0]
 - Change crate name to sn_fake_clock
