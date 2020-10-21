@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.5](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.4...v0.4.5) (2020-10-21)
+
+
+### Features
+
+* add checked_add, checked_sub ([9e438d4](https://github.com/maidsafe/sn_fake_clock/commit/9e438d4fade6a4bd61c39f777ad77bf937ba9f20)), closes [#23](https://github.com/maidsafe/sn_fake_clock/issues/23)
+
 ### [0.4.4](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.3...v0.4.4) (2020-10-21)
 
 ### [0.4.3](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.2...v0.4.3) (2020-10-09)
