@@ -110,13 +110,16 @@ impl FakeClock {
     /// Returns the amount of fake time elapsed from another `FakeClock` to
     /// this one, or `None` if that `FakeClock` is earlier than this one.
     pub fn checked_duration_since(&self, earlier: FakeClock) -> Option<Duration> {
-        self.time_created.checked_sub(earlier.time_created).map(Duration::from_millis)
+        self.time_created
+            .checked_sub(earlier.time_created)
+            .map(Duration::from_millis)
     }
 
     /// Returns the amount of fake time elapsed from another `FakeClock` to
     /// this one, or zero duration if that `FakeClock` is earlier than this one.
     pub fn saturating_duration_since(&self, earlier: FakeClock) -> Duration {
-        self.checked_duration_since(earlier).unwrap_or(Duration::new(0, 0))
+        self.checked_duration_since(earlier)
+            .unwrap_or_else(|| Duration::new(0, 0))
     }
 
     /// Returns how much fake time has elapsed since the creation of `self`.
@@ -232,8 +235,10 @@ mod tests {
         FakeClock::set_time(std::u64::MAX);
         let inst_max = FakeClock::now();
 
-        assert_eq!(Some(Duration::from_millis(std::u64::MAX)),
-            inst_max.checked_duration_since(inst0));
+        assert_eq!(
+            Some(Duration::from_millis(std::u64::MAX)),
+            inst_max.checked_duration_since(inst0)
+        );
     }
 
     #[test]
@@ -253,8 +258,10 @@ mod tests {
         FakeClock::set_time(std::u64::MAX);
         let inst_max = FakeClock::now();
 
-        assert_eq!(Duration::from_millis(std::u64::MAX),
-            inst_max.saturating_duration_since(inst0));
+        assert_eq!(
+            Duration::from_millis(std::u64::MAX),
+            inst_max.saturating_duration_since(inst0)
+        );
     }
 
     #[test]
