@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.6](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.5...v0.4.6) (2020-10-21)
+
+
+### Features
+
+* add checked_duration_since, saturating_duration_since ([cfeca69](https://github.com/maidsafe/sn_fake_clock/commit/cfeca699c9c88d3df04ebaaba5d31039e0cd7324)), closes [#26](https://github.com/maidsafe/sn_fake_clock/issues/26)
+
 ### [0.4.5](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.4...v0.4.5) (2020-10-21)
 
 
