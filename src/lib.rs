@@ -61,6 +61,7 @@
 )]
 
 use std::cell::Cell;
+use std::convert::TryInto;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::time::Duration;
@@ -98,7 +99,7 @@ impl FakeClock {
     /// Returns a `FakeClock` instance representing the current instant.
     pub fn now() -> Self {
         let time = Self::time();
-        FakeClock { time_created: time }
+        Self { time_created: time }
     }
 
     /// Returns the duration that passed between `self` and `earlier`.
@@ -109,6 +110,27 @@ impl FakeClock {
     /// Returns how much fake time has elapsed since the creation of `self`.
     pub fn elapsed(self) -> Duration {
         Duration::from_millis(Self::time() - self.time_created)
+    }
+
+    /// Returns `Some(t)` where `t` is the time `self + duration` if `t` can be
+    /// represented as `FakeClock`, `None` otherwise.
+    pub fn checked_add(&self, duration: Duration) -> Option<FakeClock> {
+        duration
+            .as_millis()
+            .checked_add(self.time_created as u128)
+            .and_then(|time| time.try_into().ok())
+            .map(|time| Self { time_created: time })
+    }
+
+    /// Returns `Some(t)` where `t` is the time `self - duration` if `t` can be
+    /// represented as `FakeClock`, `None` otherwise.
+    pub fn checked_sub(&self, duration: Duration) -> Option<FakeClock> {
+        duration
+            .as_millis()
+            .try_into()
+            .ok()
+            .and_then(|dur| self.time_created.checked_sub(dur))
+            .map(|time| Self { time_created: time })
     }
 }
 
@@ -123,17 +145,17 @@ impl fmt::Debug for FakeClock {
 }
 
 impl Add<Duration> for FakeClock {
-    type Output = FakeClock;
+    type Output = Self;
     fn add(mut self, other: Duration) -> FakeClock {
-        self.time_created += other.as_secs() * 1000 + u64::from(other.subsec_nanos()) / 1_000_000;
+        self.time_created += other.as_millis() as u64;
         self
     }
 }
 
 impl Sub<Duration> for FakeClock {
-    type Output = FakeClock;
+    type Output = Self;
     fn sub(mut self, other: Duration) -> FakeClock {
-        self.time_created -= other.as_secs() * 1000 + u64::from(other.subsec_nanos()) / 1_000_000;
+        self.time_created -= other.as_millis() as u64;
         self
     }
 }
@@ -142,5 +164,52 @@ impl Sub<FakeClock> for FakeClock {
     type Output = Duration;
     fn sub(self, other: FakeClock) -> Duration {
         Duration::from_millis(self.time_created - other.time_created)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_checked_add_some() {
+        FakeClock::set_time(0);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+        FakeClock::set_time(std::u64::MAX);
+
+        assert_eq!(Some(FakeClock::now()), inst.checked_add(dur));
+    }
+
+    #[test]
+    fn test_checked_add_none() {
+        FakeClock::set_time(1);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+
+        assert_eq!(None, inst.checked_add(dur));
+    }
+
+    #[test]
+    fn test_checked_sub_some() {
+        FakeClock::set_time(std::u64::MAX);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+        FakeClock::set_time(0);
+
+        assert_eq!(Some(FakeClock::now()), inst.checked_sub(dur));
+    }
+
+    #[test]
+    fn test_checked_sub_none() {
+        FakeClock::set_time(std::u64::MAX - 1);
+
+        let inst = FakeClock::now();
+        let dur = Duration::from_millis(std::u64::MAX);
+
+        assert_eq!(None, inst.checked_sub(dur));
     }
 }
