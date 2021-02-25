@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.11](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.10...v0.4.11) (2021-02-25)
+
 ### [0.4.10](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.9...v0.4.10) (2021-02-03)
 
 ### [0.4.9](https://github.com/maidsafe/sn_fake_clock/compare/v0.4.8...v0.4.9) (2021-01-20)
